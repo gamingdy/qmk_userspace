@@ -8,11 +8,11 @@ A customizable 80% keyboard.
 
 Make example for this keyboard (after setting up your build environment):
 
-    make keychron/v3/ansi:default
+    make keychron/v3/iso_encoder:via
 
 Flashing example for this keyboard:
 
-    make keychron/v3/ansi:default:flash
+    make keychron/v3/iso_encoder:via:flash
 
 **Reset Key**: Hold down the key located at *K00*, commonly programmed as *Esc* while plugging in the keyboard.
 
