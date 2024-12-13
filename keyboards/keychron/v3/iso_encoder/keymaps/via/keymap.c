@@ -63,7 +63,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 };
 
 
-int MAX_DELAY = 500;
+int MAX_DELAY = 1000;
 
 typedef struct{
     uint16_t keycode;
@@ -80,6 +80,11 @@ key_index key_array[RGB_MATRIX_LED_COUNT] = {
     {KC_SPC,false,80,0}
 };
 
+bool boot_effect = false;
+uint8_t light_up = 0;
+int false_delay = 50;
+uint16_t previous_timer = 0;
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     
     for (uint8_t i = 0; i < RGB_MATRIX_LED_COUNT; i++) {
@@ -94,6 +99,28 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 }
 
 bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
+    if (!boot_effect) {
+        
+        if(light_up < RGB_MATRIX_LED_COUNT){
+            if(!key_array[light_up].pressed){
+                rgb_matrix_set_color(key_array[light_up].index, 255, 255, 255);
+                key_array[light_up].timer = timer_read();
+                key_array[light_up].pressed = true;
+                previous_timer = timer_read();
+                                    
+            }
+            if(previous_timer == 0){
+                previous_timer = timer_read();
+            }
+            if(timer_elapsed(previous_timer) > false_delay){
+                light_up++;
+            }
+            
+            
+        }else{
+            boot_effect = true;
+        }
+    }
 
     for (uint8_t i = 0; i < RGB_MATRIX_LED_COUNT; i++) {
         if (key_array[i].pressed) {
@@ -110,7 +137,6 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     }
     return false;
 }
-
 
 
 #if defined(ENCODER_MAP_ENABLE)
